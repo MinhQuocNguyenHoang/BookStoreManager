@@ -1,7 +1,8 @@
 #include <book.hpp>
 
-Book::Book(string Name, string Type, float price, int stock)
+Book::Book(string id, string Name, string Type, float price, int stock)
 {
+    this->id = id;
     this->Name = Name;
     this->Type = Type;
     this->price = price;

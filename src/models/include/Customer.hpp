@@ -1,17 +1,20 @@
 #pragma once
 #include <string>
-using namespace std;
 
-#include "User.hpp"
-
-class Customer : public User
+class Customer
 {
 private:
-    int phoneNumber;
+    std::string id;
+    std::string name;
+    std::string gender;
+    std::string phone;
 
 public:
-    Customer(string Name, string gender, int age);
+    Customer();
+    Customer(std::string id, std::string name, std::string gender, std::string phone);
 
-    void setPhone(int phoneNumber);
-    int getPhone() const;
+    std::string getId() const;
+    std::string getName() const;
+    std::string getGender() const;
+    std::string getPhone() const;
 };

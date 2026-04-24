@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+<meta charset="UTF-8">
+<title>Customer - FETEL</title>
+
+<!-- ==========================================
+     STYLE: CUSTOMER UI
+========================================== -->
+<style>
+body {
+    font-family: Arial;
+    background: #f4f6f9;
+    margin: 0;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+
+input {
+    padding: 10px;
+    margin: 5px 0;
+    width: 100%;
+}
+
+button {
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* BUTTON STYLE */
+.btn-main { background: #3498db; color: white; }
+.btn-cart { background: #27ae60; color: white; }
+.btn-back { background: #7f8c8d; color: white; }
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+</style>
+</head>
+
+
+<body>
+
+<div class="container" id="main"></div>
+
+<script>
+
+// =====================================================
+// ============== GLOBAL STATE ==========================
+// =====================================================
+
+let currentCustomer = null;
+let cart = [];
+let searchKeyword = "";
+
+
+// =====================================================
+// ============== CUSTOMER FORM =========================
+// =====================================================
+
+// Hiển thị form nhập thông tin khách
+function showForm() {
+    document.getElementById("main").innerHTML = `
+    <div class="card">
+        <h2>👤 Thông tin khách hàng</h2>
+        <input id="name" placeholder="Tên">
+        <input id="gender" placeholder="Giới tính">
+        <input id="phone" placeholder="SĐT">
+        <button class="btn-main" onclick="saveCustomer()">Tiếp tục</button>
+    </div>
+    `;
+}
+
+
+// Gửi thông tin khách sang C++
+function saveCustomer() {
+
+    let name = document.getElementById("name").value;
+    let gender = document.getElementById("gender").value;
+    let phone = document.getElementById("phone").value;
+
+    if (!name || !phone) {
+        alert("Nhập thiếu thông tin!");
+        return;
+    }
+
+    currentCustomer = { name, gender, phone };
+
+    window.webkit.messageHandlers.external.postMessage(
+        "ADD_CUSTOMER|" + name + "|" + gender + "|" + phone
+    );
+}
+
+
+// =====================================================
+// ============== SHOP (BOOK LIST) ======================
+// =====================================================
+
+// Gọi C++ để load sách
+function loadShop() {
+    window.webkit.messageHandlers.external.postMessage("GET_BOOKS_CUSTOMER");
+}
+
+
+// Render layout shop
+function renderBookPage(data) {
+
+    let html = `
+    <div class="header">
+        <h2>📚 Danh sách sách</h2>
+
+        <!-- CART -->
+        <button class="btn-cart" id="cart-count" onclick="viewCart()">
+            🛒 (${cart.length})
+        </button>
+
+        <!-- MY ORDER -->
+        <button class="btn-main" onclick="viewMyOrders()">
+            📦 Đơn của tôi
+        </button>
+
+        <!-- LOGOUT -->
+        <button class="btn-back" onclick="logout()">
+            🚪 Đăng xuất
+        </button>
+    </div>
+
+    <!-- SEARCH -->
+    <input id="search"
+        placeholder="🔍 Tìm sách..."
+        oninput="searchBooks()">
+
+    <div id="book-list"></div>
+    `;
+
+    document.getElementById("main").innerHTML = html;
+
+    renderBookList(data);
+}
+
+
+// Render danh sách sách
+function renderBookList(data) {
+
+    let html = "";
+
+    data.forEach(b => {
+        html += `
+        <div class="card">
+            <b>${b.name}</b><br>
+            Giá: ${Number(b.price).toLocaleString()} đ<br>
+            📦 Còn lại: ${b.stock} quyển<br>
+
+            <input type="number" id="qty_${b.id}" value="1" min="1">
+
+            <button class="btn-main"
+                onclick="addToCart('${b.id}','${b.name}',${b.price})">
+                Thêm vào giỏ
+            </button>
+        </div>
+        `;
+    });
+
+    document.getElementById("book-list").innerHTML = html;
+}
+
+
+// =====================================================
+// ============== SEARCH ================================
+// =====================================================
+
+let timeout;
+
+function searchBooks() {
+
+    clearTimeout(timeout);
+
+    timeout = setTimeout(() => {
+        let keyword = document.getElementById("search").value.trim();
+
+        if (keyword === "") {
+            loadShop();
+            return;
+        }
+
+        window.webkit.messageHandlers.external.postMessage(
+            "SEARCH_CUSTOMER|" + keyword
+        );
+    }, 300);
+}
+
+
+// =====================================================
+// ============== CART ================================
+// =====================================================
+
+// Thêm sách vào giỏ
+function addToCart(id, name, price) {
+
+    let qty = parseInt(document.getElementById("qty_" + id).value);
+
+    let found = cart.find(i => i.bookId === id);
+
+    if (found) {
+        found.quantity += qty;
+    } else {
+        cart.push({ bookId: id, name, quantity: qty, price });
+    }
+
+    updateCartUI();
+    alert("Đã thêm vào giỏ!");
+}
+
+
+// Xem giỏ hàng
+function viewCart() {
+
+    let html = `
+    <div class="header">
+        <h2>🛒 Giỏ hàng</h2>
+        <button class="btn-back" onclick="loadShop()">⬅ Quay lại</button>
+    </div>
+    `;
+
+    let total = 0;
+
+    if (cart.length === 0) {
+        html += "<p>Giỏ hàng trống</p>";
+    }
+
+    cart.forEach(item => {
+        html += `
+        <div class="card">
+            ${item.name} x${item.quantity}<br>
+            ${Number(item.price * item.quantity).toLocaleString()} đ
+        </div>
+        `;
+        total += item.quantity * item.price;
+    });
+
+    html += `
+    <h3>💰 Tổng: ${Number(total).toLocaleString()} đ</h3>
+    <button class="btn-main" onclick="checkout()">Thanh toán</button>
+    `;
+
+    document.getElementById("main").innerHTML = html;
+}
+
+
+// =====================================================
+// ============== CHECKOUT =============================
+// =====================================================
+
+// Gửi đơn hàng sang C++
+function checkout() {
+
+    let data = cart.map(i => `${i.bookId}:${i.quantity}`).join("|");
+
+    window.webkit.messageHandlers.external.postMessage(
+        "CHECKOUT|" + currentCustomer.name + "|" + data
+    );
+
+    alert("Thanh toán thành công!");
+
+    cart = [];
+    loadShop();
+}
+
+
+// =====================================================
+// ============== ORDER ================================
+// =====================================================
+
+// Lấy đơn của khách
+function viewMyOrders() {
+    window.webkit.messageHandlers.external.postMessage(
+        "GET_MY_ORDERS|" + currentCustomer.name
+    );
+}
+
+
+// Render đơn hàng
+function renderMyOrders(data) {
+
+    let html = `
+    <div class="header">
+        <h2>📦 Đơn hàng của tôi</h2>
+        <button class="btn-back" onclick="loadShop()">⬅ Quay lại</button>
+    </div>
+    `;
+
+    if (data.length === 0) {
+        html += "<p>Bạn chưa có đơn hàng nào</p>";
+    }
+
+    data.forEach(o => {
+        html += `
+        <div class="card">
+            <b>Mã đơn:</b> ${o.id}<br>
+            <b>Sách:</b><br>
+            <pre>${o.name}</pre>
+            <b>Số lượng:</b> ${o.quantity}<br>
+            <b>Tổng:</b> ${Number(o.total).toLocaleString()} đ<br>
+            <b>Trạng thái:</b> ${o.status}
+        </div>
+        `;
+    });
+
+    document.getElementById("main").innerHTML = html;
+}
+
+
+// =====================================================
+// ============== UTIL ================================
+// =====================================================
+
+// Update số lượng giỏ hàng trên icon
+function updateCartUI() {
+
+    let btn = document.getElementById("cart-count");
+
+    let total = cart.reduce((sum, item) => {
+        return sum + item.quantity;
+    }, 0);
+
+    if (btn) {
+        btn.innerText = `🛒 (${total})`;
+    }
+}
+
+
+// Nếu khách đã tồn tại
+function customerExists(name, gender, phone) {
+
+    let useOld = confirm("Khách đã tồn tại!\nDùng lại thông tin này?");
+
+    if (useOld) {
+        currentCustomer = { name, gender, phone };
+        loadShop();
+    }
+}
+
+
+// Logout
+function logout() {
+
+    let ok = confirm("Bạn có muốn đăng xuất?");
+
+    if (ok) {
+        cart = [];
+        currentCustomer = null;
+
+        window.webkit.messageHandlers.external.postMessage("GO_HOME");
+    }
+}
+
+
+// =====================================================
+// ============== INIT ================================
+// =====================================================
+
+// Start app
+document.addEventListener("DOMContentLoaded", showForm);
+
+// expose cho C++
+window.loadShop = loadShop;
+
+</script>
+
+</body>
+</html>

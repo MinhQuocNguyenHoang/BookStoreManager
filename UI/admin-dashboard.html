@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản trị - Nhà sách FETEL</title>
+    <style>
+        /* THIẾT LẬP CHUNG */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            display: flex; /* Sử dụng Flexbox để chia màn hình làm 2 cột */
+            height: 100vh;
+        }
+
+        /* 1. THANH ĐIỀU HƯỚNG BÊN TRÁI (SIDEBAR) */
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50; /* Màu xanh đen đậm sang trọng */
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            background-color: #1a252f;
+            border-bottom: 3px solid #ff0000; /* Điểm nhấn màu đỏ Admin */
+        }
+
+        .sidebar-header h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            border-bottom: 1px solid #34495e;
+        }
+
+        .sidebar-menu a {
+            display: block;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: #ff0000; /* Nổi bật menu đang chọn */
+        }
+
+        .logout-btn {
+            margin-top: auto; /* Đẩy nút đăng xuất xuống cuối cùng */
+            padding: 15px 20px;
+            background-color: #c0392b;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .logout-btn:hover { background-color: #a5281b; }
+
+        /* 2. KHU VỰC NỘI DUNG CHÍNH (MAIN CONTENT) */
+        .main-content {
+            flex-grow: 1; /* Chiếm toàn bộ phần không gian còn lại */
+            padding: 30px;
+            overflow-y: auto; /* Cho phép cuộn nếu danh sách quá dài */
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header-actions h1 {
+            margin: 0;
+            color: #333;
+        }
+
+        /* Nút Thêm sách */
+        .btn-add {
+            background-color: #27ae60; /* Màu xanh lá */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-add:hover { background-color: #219150; }
+
+        /* BẢNG QUẢN LÝ SÁCH */
+        .table-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        table th {
+            background-color: #f8f9fa;
+            color: #333;
+            font-weight: bold;
+        }
+
+        table tr:hover { background-color: #f1f2f6; }
+
+        /* Cột hình ảnh thu nhỏ */
+        .book-img {
+            width: 50px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        /* Nút Hành động trong bảng */
+        .btn-edit, .btn-delete {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+            margin-right: 5px;
+        }
+
+        .btn-edit { background-color: #3498db; } /* Xanh dương */
+        .btn-edit:hover { background-color: #2980b9; }
+
+        .btn-delete { background-color: #e74c3c; } /* Đỏ */
+        .btn-delete:hover { background-color: #c0392b; }
+
+    </style>
+</head>
+<body>
+
+    <!-- ================= SIDEBAR ================= -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Admin FETEL</h2>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#" onclick="loadBooks()">Quản lý Kho Sách</a></li>
+            <li><a href="#" onclick="loadOrders()">Quản lý Đơn hàng</a></li>
+        </ul>
+        <a href="UI.html" class="logout-btn">Đăng xuất</a>
+    </div>
+
+    <!-- ================= MAIN CONTENT ================= -->
+    <div class="main-content" id="mainContent">
+        
+        <div class="header-actions">
+            <h1>Kho Sách Hiện Tại</h1>
+            <input type="text" id="searchInput" placeholder="Tìm sách..."
+                oninput="searchBooks()" 
+                style="padding:8px; border-radius:5px; border:1px solid #ccc;">
+            <button class="btn-add" onclick="addBook()">+ Thêm Sách Mới</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên sách</th>
+                        <th>Thể loại</th>
+                        <th>Giá bán (VNĐ)</th>
+                        <th>Số lượng còn</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="bookTable"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+<script>
+    // ================= RENDER BOOK =================
+function renderBooks(data) {
+    let table = document.getElementById("bookTable");
+    table.innerHTML = "";
+
+    data.forEach(book => {
+        let row = `
+            <tr>
+                <td>#${book.id}</td>
+                <td>${book.name}</td>
+                <td>${book.type}</td>
+                <td>${Number(book.price).toLocaleString()}đ</td>
+                <td>${book.stock}</td>
+                <td>
+                    <button onclick="updateStock('${book.id}')">Sửa</button>
+                    <button onclick="deleteBook('${book.id}')">Xóa</button>
+                </td>
+            </tr>
+        `;
+        table.innerHTML += row;
+    });
+}
+
+
+// ================= RENDER LAYOUT =================
+function renderBookLayout() {
+    document.getElementById("mainContent").innerHTML = `
+        <div class="header-actions">
+            <h1>Kho Sách Hiện Tại</h1>
+            <input type="text" id="searchInput" placeholder="Tìm sách..."
+                oninput="searchBooks()" 
+                style="padding:8px; border-radius:5px; border:1px solid #ccc;">
+            <button class="btn-add" onclick="addBook()">+ Thêm Sách Mới</button>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tên sách</th>
+                        <th>Thể loại</th>
+                        <th>Giá bán</th>
+                        <th>Số lượng</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="bookTable"></tbody>
+            </table>
+        </div>
+    `;
+}
+
+// ================= SEARCH =================
+let timeout;
+
+function searchBooks() {
+    clearTimeout(timeout);
+
+    timeout = setTimeout(() => {
+        let keyword = document.getElementById("searchInput").value.trim();
+
+        if (keyword === "") {
+            window.webkit.messageHandlers.external.postMessage("GET_BOOKS");
+            return;
+        }
+
+        window.webkit.messageHandlers.external.postMessage(
+            "SEARCH_ADMIN|" + keyword
+        );
+    }, 300);
+}
+
+// ================= LOAD BOOK =================
+function loadBooks(data) {
+
+    // nếu chưa có layout thì render lại
+    if (!document.getElementById("bookTable")) {
+        renderBookLayout();
+    }
+
+    // nếu chưa có data → gọi C++ lấy
+    if (!data) {
+        window.webkit.messageHandlers.external.postMessage("GET_BOOKS");
+        return;
+    }
+
+    allBooks = data;
+    renderBooks(data);
+}
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("HTML READY");
+    window.webkit.messageHandlers.external.postMessage("GET_BOOKS");
+});
+
+// ================= CRUD =================
+function deleteBook(id) {
+    if (confirm("Xóa sách này?")) {
+        window.webkit.messageHandlers.external.postMessage("DELETE|" + id);
+    }
+}
+
+function addBook() {
+    let name = prompt("Tên sách:");
+    let type = prompt("Thể loại:");
+    let price = prompt("Giá:");
+    let stock = prompt("Số lượng:");
+
+    if (name && price && stock) {
+        window.webkit.messageHandlers.external.postMessage(
+            "ADD|" + name + "|" + type + "|" + price + "|" + stock
+        );
+    }
+}
+
+function updateStock(id) {
+    let amount = prompt("Nhập số lượng (+ tăng, - giảm):");
+
+    if (amount === null) return;
+
+    amount = amount.trim();
+
+    if (amount === "" || isNaN(amount)) {
+        alert("Vui lòng nhập số hợp lệ!");
+        return;
+    }
+
+    window.webkit.messageHandlers.external.postMessage(
+        "UPDATE|" + id + "|" + amount
+    );
+}
+
+// ================= ORDER =================
+function loadOrders() {
+    window.webkit.messageHandlers.external.postMessage("GET_ORDERS");
+}
+
+function renderOrderPage(data,revenue) {
+    let html = `
+        <h1>Đơn hàng</h1>
+        <h3> Tổng doanh thu: ${Number(revenue).toLocaleString('vi-VN')} VND</h3>
+        <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Khách</th>
+                <th>Sách</th>
+                <th>Số lượng</th>
+                <th>Tổng</th>
+                <th>Trạng thái</th>
+            </tr>
+        </thead>
+        <tbody>
+    `;
+
+    data.forEach(o => {
+        html += `
+        <tr>
+            <td>${o.id}</td>
+            <td>${o.customerId}</td>
+            <td style="white-space: pre-line;">${o.name}</td>
+            <td>${o.quantity}</td>
+            <td>${o.total}</td>
+            <td>${o.status}</td>
+        </tr>`;
+    });
+
+    html += "</tbody></table>";
+
+    document.getElementById("mainContent").innerHTML = html;
+}
+</script>
+</body>
+</html>

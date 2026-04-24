@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- ==========================================
+         META + TITLE
+    ========================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập Admin</title>
+
+    <!-- ==========================================
+         STYLE: LOGIN PAGE
+    ========================================== -->
+    <style>
+
+        /* ==========================================
+           BODY: căn giữa form login
+        ========================================== */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ==========================================
+           LOGIN BOX
+        ========================================== */
+        .login-box {
+            background-color: #ffffff;
+            width: 350px;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* Tiêu đề */
+        .login-box h2 {
+            margin-top: 0;
+            color: #ff0000;
+            font-size: 28px;
+            margin-bottom: 30px;
+        }
+
+        /* ==========================================
+           INPUT GROUP
+        ========================================== */
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        /* focus effect */
+        .input-group input:focus {
+            outline: none;
+            border-color: #ff0000;
+        }
+
+        /* ==========================================
+           BUTTON LOGIN
+        ========================================== */
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            background-color: #cc0000;
+        }
+
+        /* ==========================================
+           BACK LINK
+        ========================================== */
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #0056b3;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <!-- ==========================================
+         LOGIN FORM
+    ========================================== -->
+    <div class="login-box">
+
+        <h2>Đăng nhập Admin</h2>
+
+        <!-- FORM LOGIN -->
+        <form onsubmit="thucHienDangNhap(event)">
+
+            <!-- USERNAME -->
+            <div class="input-group">
+                <label for="username">Tài khoản</label>
+                <input type="text" id="username" name="username"
+                       placeholder="Nhập tên tài khoản..." required>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="input-group">
+                <label for="password">Mật khẩu</label>
+                <input type="password" id="password" name="password"
+                       placeholder="Nhập mật khẩu..." required>
+            </div>
+
+            <!-- BUTTON -->
+            <button type="submit" class="btn-login">
+                ĐĂNG NHẬP
+            </button>
+
+        </form>
+
+        <!-- BACK -->
+        <a href="UI.html" class="back-link">
+            ← Quay lại trang chủ
+        </a>
+
+    </div>
+
+
+    <!-- ==========================================
+         SCRIPT: LOGIN HANDLE
+    ========================================== -->
+    <script>
+
+        // ==========================================
+        // Function: thucHienDangNhap
+        // Mô tả:
+        // - Ngăn submit mặc định
+        // - Lấy username + password
+        // - Gửi sang C++ qua webview
+        // ==========================================
+        function thucHienDangNhap(event) {
+
+            event.preventDefault();
+
+            let account = document.getElementById("username").value;
+            let pass = document.getElementById("password").value;
+
+            // gửi request sang C++
+            window.webkit.messageHandlers.external.postMessage(
+                "LOGIN|" + account + "|" + pass
+            );
+        }
+
+    </script>
+
+</body>
+</html>

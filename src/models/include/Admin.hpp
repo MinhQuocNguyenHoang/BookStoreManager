@@ -7,10 +7,12 @@ using namespace std;
 class Admin : public User
 {
 private:
-string account = "Nhom4";
-int password = "12345";
+    string account = "admin123";
+    string password = "FETEL30";
+
 public:
     Admin(string Name, string gender, int age);
-    string getAccount() const ;
-    int getPassword() const ;
+    string getAccount() const;
+    string getPassword() const;
+    bool login(string usernam, string pass) const;
 };

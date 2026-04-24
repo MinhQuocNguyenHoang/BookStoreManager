@@ -4,18 +4,21 @@ Order::Order()
 {
     orderId = "";
     customerId = "";
-    orderDate = "";
     totalAmount = 0.0;
-    status = "Chưa xử lý"; // Trạng thái mặc định khi mới tạo đơn
+    status = "Chưa xử lý";
 }
 
-Order::Order(std::string oId, std::string cId, std::string date)
+Order::Order(std::string oId,
+             std::string cId,
+             std::vector<OrderItem> items,
+             std::string status)
 {
-    orderId = oId;
-    customerId = cId;
-    orderDate = date;
-    totalAmount = 0.0;     // Đơn mới chưa có sách nên tổng tiền bằng 0
-    status = "Chưa xử lý"; // Trạng thái mặc định
+    this->orderId = oId;
+    this->customerId = cId;
+    this->items = items;
+    this->status = status;
+
+    calculateTotal();
 }
 
 std::string Order::getOrderId() const
@@ -28,11 +31,6 @@ std::string Order::getCustomerId() const
     return customerId;
 }
 
-std::string Order::getOrderDate() const
-{
-    return orderDate;
-}
-
 double Order::getTotalAmount() const
 {
     return totalAmount;
@@ -43,7 +41,7 @@ std::string Order::getStatus() const
     return status;
 }
 
-std::vector<OrderItem> Order::getItems() const
+std::vector<OrderItem> &Order::getItems()
 {
     return items;
 }
@@ -61,4 +59,16 @@ void Order::setTotalAmount(double amount)
 void Order::setItems(const std::vector<OrderItem> &newItems)
 {
     items = newItems;
+}
+
+void Order::calculateTotal()
+{
+    double sum = 0;
+
+    for (auto &item : items)
+    {
+        sum += item.quantity * item.price;
+    }
+
+    totalAmount = sum;
 }

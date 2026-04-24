@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+
+    <!-- ==========================================
+         META + TITLE
+    ========================================== -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhà sách FETEL</title>
+
+    <!-- ==========================================
+         STYLE: HOME PAGE
+    ========================================== -->
+    <style>
+
+        /* ==========================================
+           BODY: layout tổng
+        ========================================== */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+
+            position: relative;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ==========================================
+           LOGO (GÓC TRÁI)
+        ========================================== */
+        .logo-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-top-text {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .text-dark { color: #4a4a4a; }
+        .text-blue { color: #0056b3; }
+
+        .logo-bottom-box {
+            background-color: #38bdf8;
+            color: white;
+            padding: 5px 10px;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* ==========================================
+           TITLE
+        ========================================== */
+        .main-title {
+            margin-top: 15vh;
+            font-size: 32px;
+        }
+
+        /* ==========================================
+           CENTER CONTENT (2 CARD)
+        ========================================== */
+        .center-content {
+            display: flex;
+            gap: 80px;
+            margin-top: 60px;
+        }
+
+        .card {
+            width: 300px;
+            padding: 20px 0;
+            cursor: pointer;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card img {
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
+        }
+
+        .card-text {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        /* USER */
+        .user-card .card-text {
+            color: #000;
+        }
+
+        /* ADMIN */
+        .admin-card {
+            background-color: red;
+        }
+
+        .admin-card .card-text {
+            color: white;
+        }
+
+        /* ==========================================
+           DECORATION
+        ========================================== */
+        .book-decoration {
+            position: absolute;
+            bottom: 0;
+            width: 200px;
+        }
+
+        .book-left { left: 0; }
+        .book-right { right: 0; }
+
+    </style>
+</head>
+
+
+<body>
+
+    <!-- ==========================================
+         LOGO
+    ========================================== -->
+    <div class="logo-container">
+        <div class="logo-top-text">
+            <span class="text-dark">fetel@</span>
+            <span class="text-blue">HCMUS</span>
+        </div>
+
+        <div class="logo-bottom-box">
+            Khoa Điện Tử - Viễn Thông
+        </div>
+    </div>
+
+
+    <!-- ==========================================
+         TITLE
+    ========================================== -->
+    <h1 class="main-title">Nhà sách FETEL</h1>
+
+
+    <!-- ==========================================
+         MAIN MENU
+    ========================================== -->
+    <div class="center-content">
+
+        <!-- CUSTOMER -->
+        <div class="card user-card"
+             onclick="window.location.href='customer.html'">
+            <img src="customer.png">
+            <p class="card-text">Customer</p>
+        </div>
+
+        <!-- ADMIN -->
+        <div class="card admin-card"
+             onclick="window.location.href='admin-login.html'">
+            <img src="admin.png">
+            <p class="card-text">Admin</p>
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+         DECORATION
+    ========================================== -->
+    <img class="book-decoration book-left" src="book.png">
+    <img class="book-decoration book-right" src="book.png">
+
+</body>
+</html>

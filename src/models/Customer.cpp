@@ -1,13 +1,16 @@
 #include <Customer.hpp>
 
-Customer::Customer(string Name, string gender, int age) : User(Name, gender, age) {};
+Customer::Customer() {}
 
-void Customer::setPhone(int phoneNumber)
+Customer::Customer(std::string id, std::string name, std::string gender, std::string phone)
 {
-    this->phoneNumber = phoneNumber;
+    this->id = id;
+    this->name = name;
+    this->gender = gender;
+    this->phone = phone;
 }
 
-int Customer::getPhone() const
-{
-    return phoneNumber;
-}
+std::string Customer::getId() const { return id; }
+std::string Customer::getName() const { return name; }
+std::string Customer::getGender() const { return gender; }
+std::string Customer::getPhone() const { return phone; }

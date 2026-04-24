@@ -1,6 +1,10 @@
-#include<iostream>
-using namespace std;
+#include <System.hpp>
 
-int main(){
-    cout<<"Hello";
+int main()
+{
+    SystemApp app;
+    app.init();
+    app.run();
+    return 0;
+    return 0;
 }
