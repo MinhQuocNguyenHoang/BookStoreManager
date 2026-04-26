@@ -180,9 +180,10 @@
             let pass = document.getElementById("password").value;
 
             // gửi request sang C++
-            window.webkit.messageHandlers.external.postMessage(
-                "LOGIN|" + account + "|" + pass
-            );
+            // window.webkit.messageHandlers.external.postMessage(
+            //     "LOGIN|" + account + "|" + pass
+            // );
+            window.callCpp("LOGIN|" + account + "|" + pass);
         }
 
     </script>

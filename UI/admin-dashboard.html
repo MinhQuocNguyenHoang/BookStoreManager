@@ -263,13 +263,15 @@ function searchBooks() {
         let keyword = document.getElementById("searchInput").value.trim();
 
         if (keyword === "") {
-            window.webkit.messageHandlers.external.postMessage("GET_BOOKS");
+            // window.webkit.messageHandlers.external.postMessage("GET_BOOKS");
+            window.callCpp("GET_BOOKS");
             return;
         }
 
-        window.webkit.messageHandlers.external.postMessage(
-            "SEARCH_ADMIN|" + keyword
-        );
+        // window.webkit.messageHandlers.external.postMessage(
+        //     "SEARCH_ADMIN|" + keyword
+        // );
+        window.callCpp("SEARCH_ADMIN|" + keyword);
     }, 300);
 }
 
@@ -283,7 +285,8 @@ function loadBooks(data) {
 
     // nếu chưa có data → gọi C++ lấy
     if (!data) {
-        window.webkit.messageHandlers.external.postMessage("GET_BOOKS");
+        // window.webkit.messageHandlers.external.postMessage("GET_BOOKS");
+        window.callCpp("GET_BOOKS");
         return;
     }
 
@@ -292,13 +295,15 @@ function loadBooks(data) {
 }
 document.addEventListener("DOMContentLoaded", function () {
     console.log("HTML READY");
-    window.webkit.messageHandlers.external.postMessage("GET_BOOKS");
+    // window.webkit.messageHandlers.external.postMessage("GET_BOOKS");
+    window.callCpp("GET_BOOKS");
 });
 
 // ================= CRUD =================
 function deleteBook(id) {
     if (confirm("Xóa sách này?")) {
-        window.webkit.messageHandlers.external.postMessage("DELETE|" + id);
+        // window.webkit.messageHandlers.external.postMessage("DELETE|" + id);
+        window.callCpp("DELETE|" + id);
     }
 }
 
@@ -309,9 +314,10 @@ function addBook() {
     let stock = prompt("Số lượng:");
 
     if (name && price && stock) {
-        window.webkit.messageHandlers.external.postMessage(
-            "ADD|" + name + "|" + type + "|" + price + "|" + stock
-        );
+        // window.webkit.messageHandlers.external.postMessage(
+        //     "ADD|" + name + "|" + type + "|" + price + "|" + stock
+        // );
+        window.callCpp("ADD|" + name + "|" + type + "|" + price + "|" + stock);
     }
 }
 
@@ -327,15 +333,18 @@ function updateStock(id) {
         return;
     }
 
-    window.webkit.messageHandlers.external.postMessage(
-        "UPDATE|" + id + "|" + amount
-    );
+    // window.webkit.messageHandlers.external.postMessage(
+    //     "UPDATE|" + id + "|" + amount
+    // );
+    window.callCpp("UPDATE|" + id + "|" + amount);
 }
 
 // ================= ORDER =================
 function loadOrders() {
-    window.webkit.messageHandlers.external.postMessage("GET_ORDERS");
+    // window.webkit.messageHandlers.external.postMessage("GET_ORDERS");
+    window.callCpp("GET_ORDERS")
 }
+
 
 function renderOrderPage(data,revenue) {
     let html = `
@@ -350,6 +359,7 @@ function renderOrderPage(data,revenue) {
                 <th>Số lượng</th>
                 <th>Tổng</th>
                 <th>Trạng thái</th>
+                <th>Thao tác</th>
             </tr>
         </thead>
         <tbody>

@@ -1,4 +1,6 @@
-#define WEBVIEW_IMPLEMENTATION
+// #define WEBVIEW_IMPLEMENTATION
+// #include <System.hpp>
+// #include <windows.h>
 #include <System.hpp>
 
 // =====================================================
@@ -93,45 +95,42 @@ static Admin admin("Quoc", "Male", 18);
 void SystemApp::init()
 {
     string current_path = fs::current_path().string();
-    string ui_path = "file://" + current_path + "/UI/UI.html";
+    string ui = "file://" + current_path + "/UI/UI.html";
+    w.set_title("NhaSachFetel");
+    w.set_size(1440, 900, WEBVIEW_HINT_NONE);
 
-    w.url = ui_path.c_str();
-    w.width = 1440;
-    w.height = 900;
-    w.resizable = 1;
-    w.external_invoke_cb = handleCalls;
+    w.navigate(ui);
 
-    webview_init(&w);
-}
+    // =====================================================
+    // ================= HANDLE EVENT =======================
+    // =====================================================
 
-// ==========================================
-// Function: run
-// Mô tả: Loop chính của ứng dụng
-// ==========================================
-void SystemApp::run()
-{
-    while (webview_loop(&w, 1) == 0)
-    {
-    }
-}
+    // ==========================================
+    // Function: handleCalls
+    // Mô tả:
+    // - Nhận request từ JS (string arg)
+    // - Parse action
+    // - Gọi service tương ứng
+    // - Trả dữ liệu lại bằng JS (webview_eval)
+    // ==========================================
+    w.bind("callCpp", [&](const string &arg) -> string
+           {
+        string data = arg;
 
-// =====================================================
-// ================= HANDLE EVENT =======================
-// =====================================================
+    // remove JSON wrapper ["..."]
+    if (!data.empty() && data.front() == '[')
+        data = data.substr(1);
 
-// ==========================================
-// Function: handleCalls
-// Mô tả:
-// - Nhận request từ JS (string arg)
-// - Parse action
-// - Gọi service tương ứng
-// - Trả dữ liệu lại bằng JS (webview_eval)
-// ==========================================
-void SystemApp::handleCalls(struct webview *w, const char *arg)
-{
-    cout << arg << endl;
+    if (!data.empty() && data.back() == ']')
+        data.pop_back();
 
-    string data = arg;
+    if (!data.empty() && data.front() == '"')
+        data = data.substr(1);
+
+    if (!data.empty() && data.back() == '"')
+        data.pop_back();
+    cout << data << endl;
+
     bookService bs;
 
     // =====================================================
@@ -146,9 +145,10 @@ void SystemApp::handleCalls(struct webview *w, const char *arg)
         auto books = bs.getAllBooks();
         string json = booksToJSON(books);
 
-        string script = "loadBooks(" + json + ");";
-        webview_eval(w, script.c_str());
-        return;
+        // string script = "loadBooks(" + json + ");";
+        // webview_eval(w, script.c_str());
+        w.eval("loadBooks(" + json + ");");
+        return "";
     }
 
     if (data == "GET_BOOKS_CUSTOMER")
@@ -159,9 +159,10 @@ void SystemApp::handleCalls(struct webview *w, const char *arg)
         auto books = bs.getAllBooks();
         string json = booksToJSON(books);
 
-        string script = "renderBookPage(" + json + ");";
-        webview_eval(w, script.c_str());
-        return;
+        // string script = "renderBookPage(" + json + ");";
+        // webview_eval(w, script.c_str());
+        w.eval("renderBookPage(" + json + ");");
+        return "";
     }
 
     if (data == "GET_ORDERS")
@@ -182,10 +183,11 @@ void SystemApp::handleCalls(struct webview *w, const char *arg)
 
         string json = ordersToJSON(orders);
 
-        string script = "renderOrderPage(" + json + ", " + to_string(totalRevenue) + ");";
-        webview_eval(w, script.c_str());
+        // string script = "renderOrderPage(" + json + ", " + to_string(totalRevenue) + ");";
+        // webview_eval(w, script.c_str());
+        w.eval("renderOrderPage(" + json + "," + to_string(totalRevenue) + ");");
 
-        return;
+        return "";
     }
 
     // =====================================================
@@ -195,11 +197,13 @@ void SystemApp::handleCalls(struct webview *w, const char *arg)
     if (data == "GO_HOME")
     {
         string current_path = fs::current_path().string();
-        string ui = "file://" + current_path + "/UI/UI.html";
+        string ui = "file:///" + current_path + "/UI/UI.html";
 
-        string script = "window.location.href = '" + ui + "';";
-        webview_eval(w, script.c_str());
-        return;
+        // string script = "window.location.href = '" + ui + "';";
+        // webview_eval(w, script.c_str());
+        // w.eval("window.location.href='" + ui + "';");
+        w.navigate(ui);
+        return "";
     }
 
     // =====================================================
@@ -208,7 +212,7 @@ void SystemApp::handleCalls(struct webview *w, const char *arg)
 
     size_t first_pipe = data.find("|");
     if (first_pipe == string::npos)
-        return;
+        return "";
 
     string action = data.substr(0, first_pipe);
     string payload = data.substr(first_pipe + 1);
@@ -227,15 +231,19 @@ void SystemApp::handleCalls(struct webview *w, const char *arg)
         if (admin.login(account, pass))
         {
             string current_path = fs::current_path().string();
-            string dashboard = "file://" + current_path + "/UI/admin-dashboard.html";
-
-            string script = "window.location.href = '" + dashboard + "';";
-            webview_eval(w, script.c_str());
-        }
+            string dashboard = "file:///" + current_path + "/UI/admin-dashboard.html";
+            cout<<dashboard<<endl;
+            // string script = "window.location.href = '" + dashboard + "';";
+            // webview_eval(w, script.c_str());
+            // w.eval("window.location.href='" + dashboard + "';");
+            w.navigate(dashboard);
+        }   
         else
         {
-            webview_eval(w, "alert('Sai tài khoản hoặc mật khẩu!');");
+            // webview_eval(w, "alert('Sai tài khoản hoặc mật khẩu!');");
+             w.eval("alert('Sai tài khoản hoặc mật khẩu!');");
         }
+        return "";
     }
 
     // =====================================================
@@ -248,7 +256,9 @@ void SystemApp::handleCalls(struct webview *w, const char *arg)
         bs.deleteBook(payload);
         bs.saveBooksToFile("data/data.csv");
 
-        webview_eval(w, "location.reload();");
+        // webview_eval(w, "location.reload();");
+         w.eval("location.reload();");
+         return "";
     }
 
     if (action == "ADD")
@@ -268,7 +278,9 @@ void SystemApp::handleCalls(struct webview *w, const char *arg)
         bs.addBook(id, name, type, stof(priceStr), stoi(stockStr));
         bs.saveBooksToFile("data/data.csv");
 
-        webview_eval(w, "location.reload();");
+        // webview_eval(w, "location.reload();");
+          w.eval("location.reload();");
+          return "";
     }
 
     if (action == "UPDATE")
@@ -284,7 +296,9 @@ void SystemApp::handleCalls(struct webview *w, const char *arg)
         bs.updateStock(id, stoi(amountStr));
         bs.saveBooksToFile("data/data.csv");
 
-        webview_eval(w, "location.reload();");
+        // webview_eval(w, "location.reload();");
+          w.eval("location.reload();");
+        return "";
     }
 
     if (action == "SEARCH_ADMIN")
@@ -296,9 +310,10 @@ void SystemApp::handleCalls(struct webview *w, const char *arg)
 
         string json = booksToJSON(result);
 
-        string script = "loadBooks(" + json + ");";
-        webview_eval(w, script.c_str());
-        return;
+        // string script = "loadBooks(" + json + ");";
+        // webview_eval(w, script.c_str());
+        w.eval("loadBooks(" + json + ");");
+        return "";
     }
 
     if (action == "SEARCH_CUSTOMER")
@@ -309,9 +324,10 @@ void SystemApp::handleCalls(struct webview *w, const char *arg)
         auto result = bs.searchBookByTitle(keyword);
 
         string json = booksToJSON(result);
-        string script = "renderBookList(" + json + ");";
-        webview_eval(w, script.c_str());
-        return;
+        // string script = "renderBookList(" + json + ");";
+        // webview_eval(w, script.c_str());
+         w.eval("renderBookList(" + json + ");");
+        return "";
     }
 
     // =====================================================
@@ -334,13 +350,15 @@ void SystemApp::handleCalls(struct webview *w, const char *arg)
         {
             if (c.getPhone() == phone)
             {
-                string script =
-                    "customerExists('" + c.getName() + "','" +
-                    c.getGender() + "','" +
-                    c.getPhone() + "');";
+                // string script =
+                //     "customerExists('" + c.getName() + "','" +
+                //     c.getGender() + "','" +
+                //     c.getPhone() + "');";
 
-                webview_eval(w, script.c_str());
-                return;
+                // webview_eval(w, script.c_str());
+                w.eval("customerExists('" + c.getName() + "','" +
+                       c.getGender() + "','" + c.getPhone() + "')");
+                return "";
             }
         }
 
@@ -349,8 +367,9 @@ void SystemApp::handleCalls(struct webview *w, const char *arg)
         cs.addCustomer(id, name, gender, phone);
         cs.saveCustomersToFile("data/customer.csv");
 
-        webview_eval(w, "window.loadShop();");
-        return;
+        // webview_eval(w, "window.loadShop();");
+        w.eval("window.loadShop();");
+        return "";
     }
 
     // =====================================================
@@ -359,8 +378,92 @@ void SystemApp::handleCalls(struct webview *w, const char *arg)
 
     if (action == "CHECKOUT")
     {
-        // (giữ nguyên logic của bạn – rất tốt, mình không sửa)
-        // xử lý giỏ hàng → tạo order → trừ stock
+        stringstream ss(payload);
+        string customerName, itemsStr;
+
+        getline(ss, customerName, '|');
+        getline(ss, itemsStr, '|');
+
+        // ===== load book =====
+        bookService bs;
+        bs.loadBooksFromFile("data/data.csv");
+
+        // ===== load order =====
+        OrderService os;
+        os.loadOrdersFromFile("data/orders.csv");
+
+        vector<OrderItem> orderItems;
+
+        stringstream itemStream(itemsStr);
+        string item;
+
+        bool error = false;
+
+        while (getline(itemStream, item, '|'))
+        {
+            size_t pos = item.find(":");
+            string bookId = item.substr(0, pos);
+            int qty = stoi(item.substr(pos + 1));
+
+            // tìm sách
+            auto &books = bs.getAllBooks();
+            bool found = false;
+
+            for (auto &b : books)
+            {
+                if (b.getId() == bookId)
+                {
+                    found = true;
+
+                    // không đủ hàng
+                    if (b.getStock() < qty)
+                    {
+                        // webview_eval(w, "alert('Sách không đủ hàng!');");
+                        w.eval("alert('Sách không đủ hàng!');");
+                        return "";
+                    }
+
+                    // trừ stock
+                    b.setStock(b.getStock() - qty);
+
+                    OrderItem oi;
+                    oi.bookId = bookId;
+                    oi.name = b.getName();
+                    oi.price = b.getPrice();
+                    oi.quantity = qty;
+
+                    orderItems.push_back(oi);
+                }
+            }
+
+            if (!found)
+            {
+                error = true;
+                break;
+            }
+        }
+
+        if (error)
+        {
+            // webview_eval(w, "alert('Lỗi dữ liệu đơn hàng!');");
+            w.eval("alert('Lỗi dữ liệu đơn hàng!');");
+            return "";
+        }
+
+        // ===== tạo order =====
+        string orderId = to_string(time(nullptr));
+
+        Order order(orderId, customerName, orderItems, "Done");
+
+        os.addOrder(order);
+        os.saveOrdersToFile("data/orders.csv");
+
+        // ===== lưu lại books =====
+        bs.saveBooksToFile("data/data.csv");
+
+        cout << "=> Checkout success\n";
+
+        return "";
     }
 
     // =====================================================
@@ -388,9 +491,20 @@ void SystemApp::handleCalls(struct webview *w, const char *arg)
 
         string json = ordersToJSON(myOrders);
 
-        string script = "renderMyOrders(" + json + ");";
-        webview_eval(w, script.c_str());
+        // string script = "renderMyOrders(" + json + ");";
+        // webview_eval(w, script.c_str());
+        w.eval("renderMyOrders(" + json + ");");
 
-        return;
-    }
+        return "";
+    } 
+    return ""; });
+}
+
+// ==========================================
+// Function: run
+// Mô tả: Loop chính của ứng dụng
+// ==========================================
+void SystemApp::run()
+{
+    w.run();
 }

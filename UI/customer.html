@@ -83,7 +83,11 @@ function showForm() {
         <input id="gender" placeholder="Giới tính">
         <input id="phone" placeholder="SĐT">
         <button class="btn-main" onclick="saveCustomer()">Tiếp tục</button>
+        <!-- BACK -->
     </div>
+    <a href="UI.html" class="back-link">
+        ← Quay lại trang chủ
+    </a>
     `;
 }
 
@@ -102,9 +106,10 @@ function saveCustomer() {
 
     currentCustomer = { name, gender, phone };
 
-    window.webkit.messageHandlers.external.postMessage(
-        "ADD_CUSTOMER|" + name + "|" + gender + "|" + phone
-    );
+    // window.webkit.messageHandlers.external.postMessage(
+    //     "ADD_CUSTOMER|" + name + "|" + gender + "|" + phone
+    // );
+    window.callCpp("ADD_CUSTOMER|" + name + "|" + gender + "|" + phone);
 }
 
 
@@ -114,7 +119,8 @@ function saveCustomer() {
 
 // Gọi C++ để load sách
 function loadShop() {
-    window.webkit.messageHandlers.external.postMessage("GET_BOOKS_CUSTOMER");
+    // window.webkit.messageHandlers.external.postMessage("GET_BOOKS_CUSTOMER");
+    window.callCpp("GET_BOOKS_CUSTOMER");
 }
 
 
@@ -199,9 +205,10 @@ function searchBooks() {
             return;
         }
 
-        window.webkit.messageHandlers.external.postMessage(
-            "SEARCH_CUSTOMER|" + keyword
-        );
+        // window.webkit.messageHandlers.external.postMessage(
+        //     "SEARCH_CUSTOMER|" + keyword
+        // );
+        window.callCpp("SEARCH_CUSTOMER|" + keyword);
     }, 300);
 }
 
@@ -272,9 +279,11 @@ function checkout() {
 
     let data = cart.map(i => `${i.bookId}:${i.quantity}`).join("|");
 
-    window.webkit.messageHandlers.external.postMessage(
-        "CHECKOUT|" + currentCustomer.name + "|" + data
-    );
+    // window.webkit.messageHandlers.external.postMessage(
+    //     "CHECKOUT|" + currentCustomer.name + "|" + data
+    // );
+
+    window.callCpp("CHECKOUT|" + currentCustomer.name + "|" + data);
 
     alert("Thanh toán thành công!");
 
@@ -289,9 +298,10 @@ function checkout() {
 
 // Lấy đơn của khách
 function viewMyOrders() {
-    window.webkit.messageHandlers.external.postMessage(
-        "GET_MY_ORDERS|" + currentCustomer.name
-    );
+    // window.webkit.messageHandlers.external.postMessage(
+    //     "GET_MY_ORDERS|" + currentCustomer.name
+    // );
+    window.callCpp("GET_MY_ORDERS|" + currentCustomer.name);
 }
 
 
@@ -317,7 +327,7 @@ function renderMyOrders(data) {
             <pre>${o.name}</pre>
             <b>Số lượng:</b> ${o.quantity}<br>
             <b>Tổng:</b> ${Number(o.total).toLocaleString()} đ<br>
-            <b>Trạng thái:</b> ${o.status}
+            <b>Trạng thái:</b> ${o.status}  đ<br>
         </div>
         `;
     });
@@ -366,7 +376,8 @@ function logout() {
         cart = [];
         currentCustomer = null;
 
-        window.webkit.messageHandlers.external.postMessage("GO_HOME");
+        // window.webkit.messageHandlers.external.postMessage("GO_HOME");
+        window.callCpp("GO_HOME");
     }
 }
 

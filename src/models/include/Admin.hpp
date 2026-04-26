@@ -14,5 +14,5 @@ public:
     Admin(string Name, string gender, int age);
     string getAccount() const;
     string getPassword() const;
-    bool login(string usernam, string pass) const;
+    bool login(string username, string pass) const;
 };

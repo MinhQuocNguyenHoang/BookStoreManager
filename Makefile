@@ -1,32 +1,76 @@
 # --- CẤU HÌNH CƠ BẢN ---
 CXX = g++
 TARGET = NhaSachFetel
+MINGW_BIN = /d/Tools/msys2/mingw64/bin
 
-# --- 1. CHỈ ĐƯỜNG CHO C++ TÌM FILE .HPP ---
-# -I là "Include". Báo cho C++ biết hãy chui vào 2 thư mục này để tìm header
-INCLUDES = -Isrc/models/include -Isrc/services/include
+# --- INCLUDE ---
+INCLUDES = -Isrc/models/include -Isrc/services/include -Isrc/webview/include -Isrc/services/webview2
 
-# --- 2. GOM TẤT CẢ FILE .CPP Ở MỌI THƯ MỤC ---
+# --- SOURCE ---
 SRCS = $(wildcard src/*.cpp) \
        $(wildcard src/models/*.cpp) \
-       $(wildcard src/services/*.cpp)
+       $(wildcard src/services/*.cpp) \
+	   $(wildcard src/webview/*.cc) 
 
-# --- CỜ BIÊN DỊCH VÀ THƯ VIỆN ---
-CXXFLAGS = -Wall -std=c++17 -O3 $(INCLUDES)
-LDFLAGS = `pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1`
+# --- FLAGS CHUNG ---
+CXXFLAGS += -Wall -std=c++17 -O3 $(INCLUDES)
 
-# --- CÁC QUY TẮC (RULES) ---
-all: $(TARGET)
+# ==============================
+# ===== BUILD CHO LINUX ========
+# ==============================
+LINUX_LDFLAGS = `pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.1`
+LINUX_FLAGS = -DWEBVIEW_GTK
 
-$(TARGET): $(SRCS)
-	@echo "Đang biên dịch hệ thống..."
-	$(CXX) $(CXXFLAGS) $(SRCS) -o $(TARGET) $(LDFLAGS)
-	@echo "Thành công! Tên file: $(TARGET)"
+# ==============================
+# ===== BUILD CHO WINDOWS ======
+# ==============================
+WIN_LDFLAGS = -lole32 -lcomctl32 -lgdi32 -lshlwapi
 
-run: $(TARGET)
-	@echo "Khởi động ứng dụng..."
+# ==============================
+# ===== RULES ==================
+# ==============================
+
+# Default (Linux)
+all: linux
+
+linux:
+	@echo "Build cho Linux..."
+	$(CXX) $(CXXFLAGS) $(LINUX_FLAGS) $(SRCS) -o $(TARGET) $(LINUX_LDFLAGS)
+	@echo "OK: $(TARGET)"
+
+windows:
+	@echo "Build Windows..."
+	$(CXX) $(CXXFLAGS) $(SRCS) -o $(TARGET).exe $(WIN_LDFLAGS)
+	@echo "OK: $(TARGET).exe"
+
+run:
 	./$(TARGET)
 
 clean:
-	@echo "Đang dọn dẹp..."
-	rm -f $(TARGET)
+	rm -f $(TARGET) $(TARGET).exe
+
+# ==============================
+# ===== PACKAGE (WINDOWS) ======
+# ==============================
+
+package: windows
+	@echo "Đóng gói ứng dụng..."
+
+	# tạo thư mục release
+	mkdir -p release
+
+	# copy file cần thiết
+	cp $(TARGET).exe release/
+	cp WebView2Loader.dll release/
+	cp -r src release/
+
+	# copy runtime DLL của mingw
+	cp $(MINGW_BIN)/libstdc++-6.dll release/
+	cp $(MINGW_BIN)/libgcc_s_seh-1.dll release/
+	cp $(MINGW_BIN)/libwinpthread-1.dll release/
+
+	# copy thư mục UI và data
+	cp -r UI release/
+	cp -r data release/
+
+	@echo "Done! Thư mục release đã sẵn sàng."
