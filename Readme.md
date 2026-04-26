@@ -102,7 +102,7 @@ This structure improves code organization and scalability.
 
 ## Author
 
-Nguyen Hoang Minh Quoc \\
-Pham Quoc Trung \\
-Pham Mai Dieu Thao \\
-Pham Thai Cam Nhung \\
+Nguyen Hoang Minh Quoc <br>
+Pham Quoc Trung <br>
+Pham Mai Dieu Thao <br>
+Pham Thai Cam Nhung <br>
