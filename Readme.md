@@ -205,7 +205,7 @@ This structure improves code organization and scalability.
 
 For detailed documentation of the system, please refer to the file below:
 
-- [Project Documentation (PDF)](docs/BookStoreManager_Documentation.pdf)
+- [Project Documentation (PDF)](doc/BookStoreManager_Documentation.pdf)
 
 ## Author
 
