@@ -65,23 +65,124 @@ BookStoreManager/
 
 ## How to Run
 
-### Using MSYS2 (Windows)
+### Windows (Pre-built Executable)
 
-1. Open MSYS2 Mingw64 terminal
+The project has already been built into an executable file, so no compilation is required.
 
-2. Navigate to the project directory:
+#### Steps:
 
-Example:
+1. Navigate to the project directory:
+
+```
+BookStoreManager/
+```
+
+2. Locate the executable file:
+
+```
+BookStoreManager.exe
+```
+
+3. Run the application by one of the following methods:
+
+- Double-click the `.exe` file  
+- Or run via terminal:
+
+```
+./BookStoreManager.exe
+```
+
+---
+
+### Notes
+
+- Make sure all required folders such as `data/` and `ui/` are in the correct relative paths.
+- Do not move the `.exe` file outside the project structure unless you update file paths in the code.
+
+### Requirements (for building from source)
+
+To build the project using the provided Makefile on Windows, you need to install MSYS2 and required development tools.
+
+#### 1. Install MSYS2
+
+Download and install from:
+https://www.msys2.org/
+
+After installation, open **MSYS2 MSYS terminal** and update the system:
+
+```
+pacman -Syu
+```
+
+Close the terminal when asked, then open it again and run:
+
+```
+pacman -Su
+```
+
+---
+
+#### 2. Install MinGW64 Toolchain
+
+Open **MSYS2 MinGW64 terminal** (important) and install required packages:
+
+```
+pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-make
+```
+
+(Optional but recommended):
+
+```
+pacman -S mingw-w64-x86_64-gdb
+```
+
+---
+
+#### 3. Add MinGW64 to PATH (optional)
+
+Add this path to your Windows Environment Variables if needed:
+
+```
+C:\msys64\mingw64\bin
+```
+
+---
+
+#### 4. WebView2 Runtime
+
+Make sure Microsoft Edge WebView2 Runtime is installed (usually already available on Windows 10/11).
+
+---
+
+### Build Instructions
+
+1. Open **MSYS2 MinGW64 terminal**
+
+2. Navigate to project folder:
 
 ```
 cd /c/path/to/BookStoreManager
 ```
 
-3. Run the script:
+3. Build for Windows:
 
 ```
-./script_run.sh
+make windows
 ```
+
+4. Run the program:
+
+```
+./NhaSachFetel.exe
+```
+
+---
+
+### Notes
+
+- Always use **MSYS2 MinGW64 terminal**, not the default MSYS terminal.
+- If `make` is not recognized, ensure you installed `mingw-w64-x86_64-make`.
+- If missing `.dll` errors occur, run `make package` to bundle required files.
 
 ## Design Overview
 
@@ -99,6 +200,12 @@ This structure improves code organization and scalability.
 * Improve performance for large datasets
 * Add authentication and user roles
 * Enhance UI design and usability
+
+## Documentation
+
+For detailed documentation of the system, please refer to the file below:
+
+- [Project Documentation (PDF)](docs/BookStoreManager_Documentation.pdf)
 
 ## Author
 
