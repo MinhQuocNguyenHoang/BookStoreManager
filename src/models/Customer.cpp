@@ -1,16 +1,37 @@
-#include <Customer.hpp>
+#include "Customer.hpp"
 
+// ================= CONSTRUCTOR =================
 Customer::Customer() {}
 
-Customer::Customer(std::string id, std::string name, std::string gender, std::string phone)
+Customer::Customer(const string &id, const string &name,
+                   const string &gender, const string &phone)
+    : id(id), name(name), gender(gender), phone(phone)
 {
-    this->id = id;
-    this->name = name;
-    this->gender = gender;
-    this->phone = phone;
 }
 
-std::string Customer::getId() const { return id; }
-std::string Customer::getName() const { return name; }
-std::string Customer::getGender() const { return gender; }
-std::string Customer::getPhone() const { return phone; }
+// ================= GETTER =================
+string Customer::getId() const { return id; }
+string Customer::getName() const { return name; }
+string Customer::getGender() const { return gender; }
+string Customer::getPhone() const { return phone; }
+
+// ================= SETTER =================
+void Customer::setId(const string &id)
+{
+    this->id = id;
+}
+
+void Customer::setName(const string &name)
+{
+    this->name = name;
+}
+
+void Customer::setGender(const string &gender)
+{
+    this->gender = gender;
+}
+
+void Customer::setPhone(const string &phone)
+{
+    this->phone = phone;
+}

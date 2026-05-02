@@ -1,32 +1,35 @@
-#include <order.hpp>
+#include "order.hpp"
 
+// ================= CONSTRUCTOR =================
 Order::Order()
+    : orderId(""),
+      customerId(""),
+      items(),
+      totalAmount(0.0),
+      status("Pending")
 {
-    orderId = "";
-    customerId = "";
-    totalAmount = 0.0;
-    status = "Chưa xử lý";
 }
 
-Order::Order(std::string oId,
-             std::string cId,
-             std::vector<OrderItem> items,
-             std::string status)
+Order::Order(const string &oId,
+             const string &cId,
+             const vector<OrderItem> &items,
+             const string &status)
+    : orderId(oId),
+      customerId(cId),
+      items(items),
+      totalAmount(0.0),
+      status(status)
 {
-    this->orderId = oId;
-    this->customerId = cId;
-    this->items = items;
-    this->status = status;
-
     calculateTotal();
 }
 
-std::string Order::getOrderId() const
+// ================= GETTER =================
+string Order::getOrderId() const
 {
     return orderId;
 }
 
-std::string Order::getCustomerId() const
+string Order::getCustomerId() const
 {
     return customerId;
 }
@@ -36,39 +39,41 @@ double Order::getTotalAmount() const
     return totalAmount;
 }
 
-std::string Order::getStatus() const
+string Order::getStatus() const
 {
     return status;
 }
 
-std::vector<OrderItem> &Order::getItems()
+const vector<OrderItem> &Order::getItems() const
 {
     return items;
 }
 
-void Order::setStatus(std::string newStatus)
+// ================= SETTER =================
+void Order::setStatus(const string &newStatus)
 {
     status = newStatus;
 }
 
-void Order::setTotalAmount(double amount)
-{
-    totalAmount = amount;
-}
-
-void Order::setItems(const std::vector<OrderItem> &newItems)
+void Order::setItems(const vector<OrderItem> &newItems)
 {
     items = newItems;
+    calculateTotal();
 }
 
+// ================= BEHAVIOR =================
+void Order::addItem(const OrderItem &item)
+{
+    items.push_back(item);
+    calculateTotal();
+}
+
+// ================= LOGIC =================
 void Order::calculateTotal()
 {
-    double sum = 0;
-
-    for (auto &item : items)
+    totalAmount = 0.0;
+    for (const auto &item : items)
     {
-        sum += item.quantity * item.price;
+        totalAmount += item.quantity * item.price;
     }
-
-    totalAmount = sum;
 }

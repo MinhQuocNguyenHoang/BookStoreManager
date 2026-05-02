@@ -1,46 +1,47 @@
 #pragma once
-#include <iostream>
 #include <string>
 #include <vector>
+using namespace std;
 
 struct OrderItem
 {
-    std::string bookId;
-    std::string name;
+    string bookId;
+    string name;
     int quantity;
     double price;
-    double getTotal() const
-    {
-        return quantity * price;
-    }
 };
 
 class Order
 {
 private:
-    std::string orderId;
-    std::string customerId;
-    std::vector<OrderItem> items;
+    string orderId;
+    string customerId;
+    vector<OrderItem> items;
     double totalAmount;
-    std::string status;
+    string status;
 
 public:
+    // Constructor
     Order();
-    Order(std::string oId,
-          std::string cId,
-          std::vector<OrderItem> items,
-          std::string status);
+    Order(const string &oId, const string &cId,
+          const vector<OrderItem> &items,
+          const string &status);
 
-    // Getters
-    std::string getOrderId() const;
-    std::string getCustomerId() const;
+    // Getter
+    string getOrderId() const;
+    string getCustomerId() const;
     double getTotalAmount() const;
-    std::string getStatus() const;
-    std::vector<OrderItem> &getItems();
+    string getStatus() const;
 
-    // Setters (Dùng để Service cập nhật dữ liệu)
-    void setStatus(std::string newStatus);
-    void setTotalAmount(double amount);
-    void setItems(const std::vector<OrderItem> &newItems);
+    const vector<OrderItem> &getItems() const;
+
+    // Setter
+    void setStatus(const string &newStatus);
+    void setItems(const vector<OrderItem> &newItems);
+
+    // Behavior (OOP chuẩn)
+    void addItem(const OrderItem &item);
+
+    // Logic
     void calculateTotal();
 };

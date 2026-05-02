@@ -1,21 +1,32 @@
 #pragma once
-#include <iostream>
 #include <string>
+#include <iostream>
 using namespace std;
 
 class User
 {
-private:
+protected:
     string Name;
     string gender;
     int age;
 
 public:
-    User(string Name, string gender, int age);
-    void setName(string Name);
+    // Constructor
+    User(const string &Name, const string &gender, int age);
+
+    // Setter
+    void setName(const string &Name);
+    void setGender(const string &gender);
+    void setAge(int age);
+
+    // Getter
     string getName() const;
-    void setGender(string gender);
     string getGender() const;
-    void setAge(int Age);
     int getAge() const;
+
+    // Behavior
+    void displayInfo() const;
+
+    // Polymorphism
+    virtual string getRole() const;
 };

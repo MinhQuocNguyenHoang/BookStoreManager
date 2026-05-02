@@ -1,23 +1,20 @@
 #pragma once
 #include <iostream>
 #include <string>
-
-// #ifdef WEBVIEW_GTK
-// #include <gtk/gtk.h>
-// #include <webkit2/webkit2.h>
-// #endif
-// #include "webview.h"
 #include "webview/webview.h"
 #include <windows.h>
 
-#include <Admin.hpp>
-#include <bookServices.hpp>
-#include <orderServices.hpp>
-#include <customerServices.hpp>
+#include "Admin.hpp"
+#include "bookServices.hpp"
+#include "orderServices.hpp"
+#include "customerServices.hpp"
+#include "IService.hpp" // 🔥 thêm
+
 #include <filesystem>
-#include <unistd.h>
 #include <sstream>
 #include <iomanip>
+#include <map> // 🔥 thêm
+
 using namespace std;
 namespace fs = std::filesystem;
 
@@ -25,6 +22,17 @@ class SystemApp
 {
 private:
     webview::webview w{true, nullptr};
+
+    // ===== SERVICE =====
+    bookService bs;
+    customerService cs;
+    OrderService os;
+
+    // ===== POLYMORPHISM SAFE =====
+    map<string, IService *> serviceMap;
+
+    // ===== ADMIN =====
+    Admin admin{"Quoc", "Male", 18};
 
 public:
     void init();

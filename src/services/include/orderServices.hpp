@@ -1,22 +1,26 @@
 #pragma once
 #include "order.hpp"
+#include "IService.hpp"
 #include <vector>
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <algorithm>
+using namespace std;
 
-class OrderService
+class OrderService : public IService
 {
 private:
-    std::vector<Order> orders;
+    vector<Order> orders;
 
 public:
-    void loadOrdersFromFile(std::string filepath);
-    void saveOrdersToFile(std::string filepath);
+    // File (đa hình từ IService)
+    void loadFromFile(string filepath) override;
+    void saveToFile(string filepath) override;
 
-    std::vector<Order> getAllOrders() const;
+    // Getter
+    vector<Order> getAllOrders() const;
 
+    // CRUD
     void addOrder(const Order &order);
-    void updateStatus(std::string orderId, std::string newStatus);
+    void updateStatus(const string &orderId, const string &newStatus);
 };

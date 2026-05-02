@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 #include <string>
 using namespace std;
 
@@ -13,24 +12,21 @@ private:
     int stock;
 
 public:
-    Book(string id, string Name, string Type, float price, int stock);
+    // Constructor
+    Book(const string &id, const string &Name,
+         const string &Type, float price, int stock);
 
-    void setName(string Name);
-
-    string getName() const;
-
-    void setType(string Type);
-
-    string getType() const;
-
-    void setPrice(float Type);
-
-    float getPrice() const;
-
+    // Setter
+    void setName(const string &Name);
+    void setType(const string &Type);
+    void setPrice(float price);
     void setStock(int stock);
+    void setId(const string &id);
 
+    // Getter
+    string getName() const;
+    string getType() const;
+    float getPrice() const;
     int getStock() const;
-
-    void setId(string id);
     string getId() const;
 };

@@ -1,17 +1,25 @@
 #pragma once
-#include <Customer.hpp>
+#include "Customer.hpp"
+#include "IService.hpp"
 #include <vector>
 #include <string>
+using namespace std;
 
-class customerService
+class customerService : public IService
 {
 private:
-    std::vector<Customer> customers;
+    vector<Customer> customers;
 
 public:
-    void addCustomer(std::string id, std::string name, std::string gender, std::string phone);
-    std::vector<Customer> getAllCustomers() const;
+    // CRUD
+    void addCustomer(const string &id,
+                     const string &name,
+                     const string &gender,
+                     const string &phone);
 
-    void loadCustomersFromFile(std::string filepath);
-    void saveCustomersToFile(std::string filepath);
+    vector<Customer> getAllCustomers() const;
+
+    // File (đa hình từ IService)
+    void loadFromFile(string filepath) override;
+    void saveToFile(string filepath) override;
 };

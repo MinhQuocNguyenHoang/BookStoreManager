@@ -1,22 +1,22 @@
-#include <book.hpp>
+#include "book.hpp"
 
-Book::Book(string id, string Name, string Type, float price, int stock)
+// ================= CONSTRUCTOR =================
+Book::Book(const string &id, const string &Name,
+           const string &Type, float price, int stock)
+    : id(id), Name(Name), Type(Type),
+      price(price), stock(stock)
 {
-    this->id = id;
+}
+
+// ================= SETTER =================
+void Book::setName(const string &Name)
+{
     this->Name = Name;
+}
+
+void Book::setType(const string &Type)
+{
     this->Type = Type;
-    this->price = price;
-    this->stock = stock;
-}
-
-void Book::setName(string Name)
-{
-    this->Name = Name;
-}
-
-string Book::getName() const
-{
-    return Name;
 }
 
 void Book::setPrice(float price)
@@ -24,14 +24,20 @@ void Book::setPrice(float price)
     this->price = price;
 }
 
-float Book::getPrice() const
+void Book::setStock(int stock)
 {
-    return price;
+    this->stock = stock;
 }
 
-void Book::setType(string Type)
+void Book::setId(const string &id)
 {
-    this->Type = Type;
+    this->id = id;
+}
+
+// ================= GETTER =================
+string Book::getName() const
+{
+    return Name;
 }
 
 string Book::getType() const
@@ -39,9 +45,9 @@ string Book::getType() const
     return Type;
 }
 
-void Book::setStock(int stock)
+float Book::getPrice() const
 {
-    this->stock = stock;
+    return price;
 }
 
 int Book::getStock() const
@@ -52,9 +58,4 @@ int Book::getStock() const
 string Book::getId() const
 {
     return id;
-}
-
-void Book::setId(string id)
-{
-    this->id = id;
 }

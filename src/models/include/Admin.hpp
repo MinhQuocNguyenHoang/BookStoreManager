@@ -7,12 +7,26 @@ using namespace std;
 class Admin : public User
 {
 private:
-    string account = "admin123";
-    string password = "FETEL30";
+    string account;
+    string password;
 
 public:
-    Admin(string Name, string gender, int age);
+    // Constructor
+    Admin(const string &Name, const string &gender, int age,
+          const string &account = "admin",
+          const string &password = "123");
+
+    // Getter
     string getAccount() const;
     string getPassword() const;
-    bool login(string username, string pass) const;
+
+    // Setter
+    void setAccount(const string &acc);
+    void setPassword(const string &pass);
+
+    // Login
+    bool login(const string &username, const string &pass) const;
+
+    // Polymorphism
+    string getRole() const override;
 };

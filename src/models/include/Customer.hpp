@@ -1,20 +1,30 @@
 #pragma once
 #include <string>
+using namespace std;
 
 class Customer
 {
 private:
-    std::string id;
-    std::string name;
-    std::string gender;
-    std::string phone;
+    string id;
+    string name;
+    string gender;
+    string phone;
 
 public:
+    // Constructor
     Customer();
-    Customer(std::string id, std::string name, std::string gender, std::string phone);
+    Customer(const string &id, const string &name,
+             const string &gender, const string &phone);
 
-    std::string getId() const;
-    std::string getName() const;
-    std::string getGender() const;
-    std::string getPhone() const;
+    // Getter
+    string getId() const;
+    string getName() const;
+    string getGender() const;
+    string getPhone() const;
+
+    // Setter (thêm để chuẩn OOP)
+    void setId(const string &id);
+    void setName(const string &name);
+    void setGender(const string &gender);
+    void setPhone(const string &phone);
 };
