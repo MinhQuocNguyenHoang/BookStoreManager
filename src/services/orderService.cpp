@@ -81,7 +81,6 @@ void OrderService::loadFromFile(string filepath)
         Book *b = bs.getBookById(bookId);
         item.name = (b != nullptr) ? b->getName() : "Unknown";
 
-        // 🔥 FIX QUAN TRỌNG: dùng addItem (OOP chuẩn)
         orderMap[orderId].addItem(item);
     }
 
