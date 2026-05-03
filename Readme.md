@@ -198,7 +198,6 @@ This structure improves code organization and scalability.
 
 * Replace CSV with a database system
 * Improve performance for large datasets
-* Add authentication and user roles
 * Enhance UI design and usability
 
 ## Documentation
