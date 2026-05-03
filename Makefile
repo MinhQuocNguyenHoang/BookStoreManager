@@ -48,6 +48,7 @@ run:
 
 clean:
 	rm -f $(TARGET) $(TARGET).exe
+	rm -rf release
 
 # ==============================
 # ===== PACKAGE (WINDOWS) ======

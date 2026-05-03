@@ -211,10 +211,21 @@ void SystemApp::init()
             getline(ss, phone, '|');
 
             load(serviceMap, "customer", "data/customer.csv");
+            bool exists = false;
+            for (auto &c : cs.getAllCustomers())  // giả sử có hàm này
+            {
+                if (c.getPhone() == phone)
+                {
+                    exists = true;
+                    break;
+                }
+            }
 
+            if(!exists){
             cs.addCustomer(to_string(time(nullptr)), name, gender, phone);
 
             save(serviceMap, "customer", "data/customer.csv");
+            }
 
             w.eval("window.loadShop();");
         }
