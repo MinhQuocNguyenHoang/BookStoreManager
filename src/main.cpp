@@ -6,5 +6,4 @@ int main()
     app.init();
     app.run();
     return 0;
-    return 0;
 }

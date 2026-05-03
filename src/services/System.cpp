@@ -1,4 +1,6 @@
 #include "System.hpp"
+#include <cstdlib>
+#include <ctime>
 
 // ================= HELPER POLYMORPHISM =================
 void load(map<string, IService *> &m, const string &key, const string &file)
@@ -12,6 +14,11 @@ void save(map<string, IService *> &m, const string &key, const string &file)
 }
 
 // ================= JSON =================
+string generateId()
+{
+    return to_string(rand() % 10000);
+}
+
 static string booksToJSON(vector<Book> books)
 {
     string json = "[";
@@ -163,8 +170,9 @@ void SystemApp::init()
             getline(ss, stock, '|');
 
             load(serviceMap, "book", "data/data.csv");
+            string id = generateId();
 
-            bs.addBook(to_string(bs.getAllBooks().size() + 1),
+            bs.addBook(id,
                        name, type, stof(price), stoi(stock));
 
             save(serviceMap, "book", "data/data.csv");
@@ -237,8 +245,8 @@ void SystemApp::init()
             string customer, items;
 
             getline(ss, customer, '|');
-            getline(ss, items, '|');
-
+            getline(ss, items);
+            cout << "ITEMS STRING: " << items << endl;
             load(serviceMap, "book", "data/data.csv");
             load(serviceMap, "order", "data/orders.csv");
 

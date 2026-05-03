@@ -100,13 +100,13 @@ void OrderService::saveToFile(string filepath)
     {
         const auto &items = o.getItems();
 
-        if (!items.empty())
+        for (auto &item : items) // LOOP TẤT CẢ ITEM
         {
             file << o.getOrderId() << ","
                  << o.getCustomerId() << ","
-                 << items[0].bookId << ","
-                 << items[0].quantity << ","
-                 << items[0].price << ","
+                 << item.bookId << ","
+                 << item.quantity << ","
+                 << item.price << ","
                  << o.getTotalAmount() << ","
                  << o.getStatus() << "\n";
         }
