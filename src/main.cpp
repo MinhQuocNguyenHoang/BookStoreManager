@@ -1,5 +1,4 @@
-#include <System.hpp>
-
+#include <System.cpp>
 int main()
 {
     SystemApp app;
